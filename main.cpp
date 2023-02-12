@@ -1,7 +1,19 @@
+#include <iostream>
+#include <string>
 
-#include "latex_generator.h"
+#include "generator/latex_generator.h"
 
-int main(void) {
+int main(int argc, char* argv[]) {
 
-  return 0;
+    
+    Document doc;
+    const char* filename = "example.tex"; 
+
+    // example latex
+    GenerateLatex(doc, filename);
+
+
+    return 0;      
 }
+
+
