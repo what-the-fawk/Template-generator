@@ -40,7 +40,6 @@ struct Section {
 // TODO: attachments
 // TODO: Items in sections
 // TODO: Use background class
-// TODO: аллоциаровать много памяти сразу и руками ей управлять.
 
 struct Document {
     int16_t para_distance; // not in use
