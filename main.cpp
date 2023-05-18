@@ -4,6 +4,7 @@
 #include "generator/latex_generator.h"
 
 int main(int argc, char* argv[]) {
+    init();
 
     
     Document doc;
@@ -11,6 +12,8 @@ int main(int argc, char* argv[]) {
 
     // example latex
     GenerateLatex(doc, filename);
+
+    // signal handler
 
 
     return 0;      

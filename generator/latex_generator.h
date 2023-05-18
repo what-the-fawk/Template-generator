@@ -7,7 +7,12 @@
 
 using std::string;
 
-enum class DocumentClass { ARTICLE, REPORT };
+struct DocumentClass {
+    enum { ARTICLE = 1024, BOOK, REPORT, LETTER, SLIDES };
+
+    int32_t doccl;
+    std::vector<std::string> options;    
+};
 
 struct Background {
     int16_t position;
@@ -20,6 +25,13 @@ struct Background {
 
 enum class ItemTypes { FIGURE };
 
+// struct DocumentStyle {
+
+// };
+
+struct PackageList {
+    std::vector<std::string> packages;
+};
 
 
 struct Item {
@@ -30,16 +42,37 @@ struct Item {
 
 };
 
+struct ItemList {
+    std::vector<Item> items;
+
+    // throws
+    Item& next() {
+        return items.at(position++);
+    }
+
+private:
+    size_t position = 0;
+};
+
 struct Section {
     std::string name;
     std::string contents;
-    std::vector<Item> items;
+    ItemList list;
 };
+
+std::ostream& operator<<(std::ostream& os, ItemList& list) {
+    auto item = list.next();
+
+    // os << item.
+
+}
 
 // TODO: exception handlers
 // TODO: attachments
 // TODO: Items in sections
 // TODO: Use background class
+// TODO: struct Template
+
 
 struct Document {
     int16_t para_distance; // not in use
@@ -59,11 +92,21 @@ struct Document {
     "nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo " 
     "consequat. Duis aute irure dolor in reprehenderit in voluptate velit " 
     "esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat "
-    "cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", {}}}; // <name, contents>
-    DocumentClass doc_class = DocumentClass::ARTICLE;
+    "cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", {}}}; // <name, contents, items>
+    DocumentClass doc_class = {DocumentClass::ARTICLE, {}};
 
     Background background;
 };
 
 
 void GenerateLatex(Document& doc, const char* filepath = nullptr);
+void init();
+
+
+std::ostream& operator<<(std::ostream& os, const char* ch) {
+    while(*ch != '\0') {
+        os << *ch++;
+    }
+
+    return os;
+}
