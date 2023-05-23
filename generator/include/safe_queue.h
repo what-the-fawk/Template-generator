@@ -9,41 +9,32 @@ class safe_queue {
 public:
 
     template<typename ...Args>
-    safe_queue(Args&&... args) : queue(std::forward<Args>(args), ...), flag(ATOMIC_FLAG_INIT) {}
+    safe_queue(Args&&... args) : queue(std::forward<Args>(args), ...), flag(0) {}
 
 
+public:
     void push(T&& x) {
-        while(std::atomic_flag_test_and_set_explicit(&flag, std::memory_order::memory_order_acquire));
-
+        while(!flag.compare_exchange_strong(0, 1)) {}
         queue.push(std::forward(x));
-
-        std::atomic_flag_clear(&flag);
+        flag.store(0);
     }
 
     T pop() {
-        // compare_exchange
-        while(flag.load());
-
+        while(!flag.compare_exchange_strong(0, 1)) {}
         T ret_value = queue.front();
         queue.pop();
-
-        std::atomic_flag_clear(&flag);
-
+        flag.store(0);
         return ret_value;
     }
 
     void emplace(T&& x) {
-        // while(std::atomic_flag_test_and_set_explicit(&flag, std::memory_order::memory_order_acquire));
-        while(!flag.exchange(true));
-
+        while(!flag.compare_exchange_strong(0, 1)) {}
         queue.emplace(std::forward(x));
-
-        std::atomic_flag_clear(&flag);
+        flag.store(0);
     }
 
-    // unsafe
     bool empty() {
-        return queue.empty(); // data race
+        return queue.empty();
     }
 
 

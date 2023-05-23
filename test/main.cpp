@@ -11,12 +11,6 @@ int main(int argc, char* argv[]) {
     const char* filename = "example.tex"; 
     GenerateLatex(doc, filename);
 
-    // signal handler
-
-
-    // thread_safe queue
-    // queue not safe
-
     return 0;      
 }
 

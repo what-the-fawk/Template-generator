@@ -5,8 +5,6 @@
 #include <exception>
 #include <unordered_map>
 
-// option for adding classes / authors / sections / ... in runtime
-
 struct Data {
 
 };
@@ -16,7 +14,6 @@ static std::unordered_map<std::string, std::vector<Data*>> clients;
 
 
 void init() {
-    // classes.insert(DocumentClass::classification::ARTICLE, "article");
 
     classes.insert({DocumentClass::ARTICLE, "article"});
     classes.insert({DocumentClass::BOOK, "book"});
@@ -54,8 +51,6 @@ void add_authors(std::ostream& fstr, std::vector<std::string>& authors) {
     }
 
 }
-
-// void add_attachment(std::ostream& fstr, )
 
 void add_sections(std::ostream& fstr, std::vector<Section> sections) {
 
