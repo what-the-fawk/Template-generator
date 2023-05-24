@@ -22,7 +22,7 @@ public:
         threads.reserve(size);
 
         for(size_t i = 0; i < size; ++i) {
-            threads.emplace_back(thread_pool::thread_run, this);
+            threads.emplace_back(&thread_pool::thread_run, this);
         }
     }
 
@@ -36,7 +36,6 @@ public:
     }
 
     thread_pool() = delete;
-    thread_pool(thread_pool) = delete;
     thread_pool(thread_pool&) = delete;
     thread_pool(thread_pool&&) = delete;
 
@@ -45,36 +44,42 @@ public:
     thread_pool& operator=(thread_pool) = delete;
 
 public:
-    void add_task(std::function<T>& func) {
+    void add_task(std::function<T> func) {
+
+        if(time_to_die.load()) {
+            return;
+        }
+        
         queue.emplace(std::move(func));
         condvar.notify_one();
     }
 
 protected:
     void thread_run() {
-        
-        while(!time_to_die.load()) {
+
+        std::optional<std::function<T>> function = std::nullopt;
+
+        while(1) {
             std::unique_lock<std::mutex> lock{mtx};
 
-            condvar.wait(lock, [this]() -> bool { return !queue.empty(); });
-
-            if(queue.empty() || time_to_die.load()) {
-                continue;
+            while((function = queue.pop()) == std::nullopt && !time_to_die.load()) {
+                condvar.wait(lock);
             }
 
-            auto function = queue.pop();
-
-            lock.unlock();
-            function();
+            if(time_to_die.load() && function == std::nullopt) {
+                return;
+            }
+            
+            
+            function.value()();
+            function = std::nullopt;
         }
     }
 
 protected:
     std::condition_variable condvar;
     std::mutex mtx;
-    std::atomic<bool> time_to_die;
+    std::atomic<bool> time_to_die = false;
     std::vector<std::thread> threads;
     safe_queue<std::function<T>> queue;
 };
-
-

@@ -64,14 +64,13 @@ std::ostream& operator<<(std::ostream& os, ItemList& list) {
     auto item = list.next();
 
     // os << item.
-
+    return os;
 }
 
 // TODO: exception handlers
 // TODO: attachments
 // TODO: Items in sections
 // TODO: Use background class
-// TODO: struct Template
 
 
 struct Document {
