@@ -11,10 +11,6 @@ public:
     template<typename ...Args>
     safe_queue(Args&&... args) : queue(std::forward<Args>(args)...), flag(false) {}
 
-    ~safe_queue() {
-        std::cout << "calls: " << calls << std::endl;
-    }
-
 public:
     void push(T&& x) {
         static thread_local bool expected = false;
@@ -38,8 +34,6 @@ public:
             flag.store(false, std::memory_order_release);
             return std::nullopt;
         }
-
-        ++calls;
 
         auto ret_value = std::make_optional(std::move(queue.front()));
         queue.pop();
@@ -67,7 +61,4 @@ public:
 protected:
     std::atomic<bool> flag;
     std::queue<T> queue;
-
-
-    size_t calls = 0;
 };
