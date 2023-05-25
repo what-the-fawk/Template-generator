@@ -56,22 +56,19 @@ void add_sections(std::ostream& fstr, std::vector<Section> sections) {
 
     for(auto& section: sections) {
         fstr << "\\section{" << section.name << "}\n";
-
-        fstr << section.list;
         fstr << section.contents;
         fstr << '\n';
     }
 
 }
 
-
-void GenerateLatex(Document& doc, const char* filepath) {
+void GenerateLatex(Document&& doc, const char* filepath) {
 
     std::ofstream fstr((!filepath) ? "New Document" : filepath);
     
-    if(!fstr.is_open()) {
-        throw std::runtime_error{"Could not open a file"};
-    }
+    // if(!fstr.is_open()) {
+    //     throw std::runtime_error{"Could not open a file"};
+    // }
 
     add_class(fstr, doc.doc_class);
 

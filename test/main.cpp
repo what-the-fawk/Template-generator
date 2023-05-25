@@ -3,14 +3,15 @@
 #include <atomic>
 #include <cassert>
 #include <unistd.h>
+#include <future>
 
 #include "../generator/include/latex_generator.h"
 #include "../generator/include/thread_pool.h"
 
 std::atomic<int> cnt = 0;
 
-void foo() {
-    ++cnt;
+void foo(int i) {
+    cnt += i;
 }
 
 
@@ -29,20 +30,26 @@ int main(int argc, char* argv[]) {
     // init();
 
     size_t num_threads = 3;
-    thread_pool<void()> pool = thread_pool<void()>(num_threads);
+    thread_pool pool = thread_pool(num_threads);
 
 
     size_t task_adds = 0;
 
+    Document doc;
+
     for(int i = 0; i < 1000; ++i) {
         ++task_adds;
-        std::function<void()> func(foo);
-        pool.add_task(func);
+
+        pool.add_task(foo, i);
+
+        // std::function<void(int)> func = f;
+        
+        // FuncArgList = std::make_pair(&GenerateLatex, std::make_pair(doc, ""));
     }
 
     // std::cout << cnt << std::endl;
 
-    std::cout << "tasks: " << task_adds << std::endl;
+    // std::cout << "tasks: " << task_adds << std::endl;
 
     // safe_queue<int> queue;
 
@@ -67,7 +74,8 @@ int main(int argc, char* argv[]) {
     // const char* filename = "example.tex"; 
     // GenerateLatex(doc, filename);
 
-    // sleep(5);
+    sleep(5);
+    std::cout << cnt;
 
     return 0;
 }

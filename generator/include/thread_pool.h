@@ -7,10 +7,10 @@
 #include <thread>
 #include <queue>
 #include <functional>
+#include <future>
 
 #include "safe_queue.h"
 
-template <typename T>
 class thread_pool {
 public:
     explicit thread_pool(size_t size) {
@@ -44,20 +44,22 @@ public:
     thread_pool& operator=(thread_pool) = delete;
 
 public:
-    void add_task(std::function<T> func) {
+
+    template <typename Function, typename ...Args>
+    void add_task(const Function& task_func, Args&&... args) {
 
         if(time_to_die.load()) {
             return;
         }
-        
-        queue.emplace(std::move(func));
+
+        queue.emplace(std::async(std::launch::deferred, task_func, args...));
         condvar.notify_one();
     }
 
 protected:
     void thread_run() {
 
-        std::optional<std::function<T>> function = std::nullopt;
+        std::optional<std::future<void>> function = std::nullopt;
 
         while(1) {
             std::unique_lock<std::mutex> lock{mtx};
@@ -69,9 +71,9 @@ protected:
             if(time_to_die.load() && function == std::nullopt) {
                 return;
             }
-            
-            
-            function.value()();
+
+            function.value().get();
+
             function = std::nullopt;
         }
     }
@@ -81,5 +83,21 @@ protected:
     std::mutex mtx;
     std::atomic<bool> time_to_die = false;
     std::vector<std::thread> threads;
-    safe_queue<std::function<T>> queue;
+    safe_queue<std::future<void>> queue;
 };
+
+/*
+template <typename Func, typename ...Args>
+int64_t add_task(const Func& task_func, Args&&... args) {
+    // получаем значение индекса для новой задачи
+    int64_t task_idx = last_idx++;
+
+    std::lock_guard<std::mutex> q_lock(q_mtx);
+    q.emplace(std::async(std::launch::deferred, task_func, args...), task_idx);
+    
+    // делаем notify_one, чтобы проснулся один спящий поток (если такой есть)
+    // в методе run
+    q_cv.notify_one();
+    return task_idx;
+}
+*/
