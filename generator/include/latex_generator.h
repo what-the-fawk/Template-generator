@@ -64,21 +64,16 @@ std::ostream& operator<<(std::ostream& os, ItemList& list) {
     auto item = list.next();
 
     // os << item.
-
+    return os;
 }
 
-// TODO: exception handlers
-// TODO: attachments
-// TODO: Items in sections
-// TODO: Use background class
-// TODO: struct Template
-
+// \n -> //
 
 struct Document {
     int16_t para_distance; // not in use
 
     std::string title = "Lorem ipsum";
-    std::vector<std::string> author = {"Dasha"}; // +1
+    std::vector<std::string> author = {"Dasha"};
     std::string title_contents = "";
     ///
     std::vector<FILE*> attachments = {}; // <---
@@ -99,7 +94,8 @@ struct Document {
 };
 
 
-void GenerateLatex(Document& doc, const char* filepath = nullptr);
+
+void GenerateLatex(Document&& doc, const char* filepath = nullptr);
 void init();
 
 
