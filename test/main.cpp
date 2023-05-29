@@ -4,80 +4,18 @@
 #include <cassert>
 #include <unistd.h>
 #include <future>
+#include <sys/time.h>
+#include <chrono>
 
 #include "../generator/include/latex_generator.h"
 #include "../generator/include/thread_pool.h"
 
-std::atomic<int> cnt = 0;
-
-void foo(int i) {
-    cnt += i;
-}
-
-
-#define THREAD_NUM 10
-#define ITERS 1000
-
-void add_number(safe_queue<int>& queue) {
-
-    for(int i = 0; i < ITERS; ++i) {
-        queue.push(1);
-    }
-}
-
-
-int main(int argc, char* argv[]) {
-    // init();
-
-    size_t num_threads = 3;
-    thread_pool pool = thread_pool(num_threads);
-
-
-    size_t task_adds = 0;
-
+int main() {
+    init();
     Document doc;
 
-    for(int i = 0; i < 1000; ++i) {
-        ++task_adds;
-
-        pool.add_task(foo, i);
-
-        // std::function<void(int)> func = f;
-        
-        // FuncArgList = std::make_pair(&GenerateLatex, std::make_pair(doc, ""));
-    }
-
-    // std::cout << cnt << std::endl;
-
-    // std::cout << "tasks: " << task_adds << std::endl;
-
-    // safe_queue<int> queue;
-
-    // std::vector<std::thread> threads;
-    // threads.reserve(THREAD_NUM);
-
-    // for(int i = 0; i < THREAD_NUM; ++i) {
-    //     threads.emplace_back(add_number, std::ref(queue));
-    // }
-
-
-    // for(auto&& thread : threads) {
-    //     thread.join();
-    // }
-
-    // assert(queue.size() == ITERS * THREAD_NUM);
-
-    
-
-    // example latex
-    // Document doc;
-    // const char* filename = "example.tex"; 
-    // GenerateLatex(doc, filename);
-
-    sleep(5);
-    std::cout << cnt;
-
-    return 0;
+    doc.font = Document::QBK;
+    doc.doc_class.options.push_back("12pt");
+    doc.packlist.packages.push_back("lipsum");
+    GenerateLatex(std::move(doc), "example.tex");
 }
-
-
