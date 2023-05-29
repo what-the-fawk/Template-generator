@@ -130,9 +130,13 @@ class DocFormState extends State<DocForm> {
       child: Column(
         children: <Widget>[
           TextFormField(
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Имя автора',
+            ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Please enter some text';
+                return 'Пустое поле';
               }
               return null;
             },
