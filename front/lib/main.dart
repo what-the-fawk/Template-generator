@@ -1,9 +1,23 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 import 'signup_page.dart';
 import 'personal_page.dart';
 import 'bout_us.dart';
+import 'forgot_pass.dart';
+import 'change_personal_page.dart';
+import 'make_doc.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-void main() => runApp(const SignUpApp());
+Future<void> main() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  runApp(const SignUpApp());
+}
 
 class SignUpApp extends StatelessWidget {
   const SignUpApp({super.key});
@@ -12,213 +26,19 @@ class SignUpApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       routes: {
-        // '/': (context) => WelcomeScreen(),
-        '/signup': (context) => const SignUpScreen(),
-        HomeScreen.route: (context) => const HomeScreen(),
+        SignUpScreen.route: (context) => const SignUpScreen(),
+        HomeScreen.route: (context) => const HomeScreen(), // personal home
         WelcomeScreen.route: (context) => const WelcomeScreen(),
-        PersonalPage.route: (context) => const PersonalPage(),
+        PersonalPage.route: (context) => const PersonalPage(), //bout us
+        ForgotPass.route: (context) => const ForgotPass(),
+        ChangePerson.route: (context) => const ChangePerson(),
+        GenerateScreen.route: (context) => const GenerateScreen(),
       },
       home: const WelcomeScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
 }
-
-// // class SignUpScreen extends StatelessWidget {
-// //   const SignUpScreen({super.key});
-
-// //   @override
-// //   Widget build(BuildContext context) {
-// //     return const Scaffold(
-// //       backgroundColor: Color.fromARGB(255, 203, 244, 181),
-// //       body: Center(
-// //         child: SizedBox(
-// //           width: 400,
-// //           child: Card(
-// //             child: SignUpForm(),
-// //           ),
-// //         ),
-// //       ),
-// //     );
-// //   }
-// // }
-
-// class RegScreen extends StatelessWidget {
-//   const RegScreen({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return const Scaffold(
-//       backgroundColor: Color.fromARGB(255, 203, 244, 181),
-//       body: Center(
-//         child: SizedBox(
-//           width: 400,
-//           child: Card(
-//             child: RegForm(),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-// // class WelcomeScreen extends StatelessWidget {
-// //   const WelcomeScreen({super.key});
-
-// //   @override
-// //   Widget build(BuildContext context) {
-// //     return Scaffold(
-// //       body: Center(
-// //         child: Row(
-// //           mainAxisSize: MainAxisSize.min,
-// //           children: [
-// //             ElevatedButton(
-// //               child: Text('Log in',
-// //                   style: Theme.of(context).textTheme.displayMedium),
-// //               onPressed: () {
-// //                 Navigator.push(
-// //                   context,
-// //                   MaterialPageRoute(builder: (context) => const SignUpScreen()),
-// //                 );
-// //               },
-// //             ),
-// //             ElevatedButton(
-// //               child: Text('Sign up',
-// //                   style: Theme.of(context).textTheme.displayMedium),
-// //               onPressed: () {
-// //                 Navigator.push(
-// //                   context,
-// //                   MaterialPageRoute(builder: (context) => const RegScreen()),
-// //                 );
-// //               },
-// //             ),
-// //           ],
-// //         ),
-// //       ),
-// //     );
-// //   }
-// // }
-
-// class SignUpForm extends StatefulWidget {
-//   const SignUpForm({super.key});
-
-//   @override
-//   State<SignUpForm> createState() => _SignUpFormState();
-// }
-
-// class _SignUpFormState extends State<SignUpForm> {
-//   final _passwordTextController = TextEditingController();
-//   final _usernameTextController = TextEditingController();
-//   final _formKey = GlobalKey<FormState>();
-
-//   // ignore: unused_element
-//   void _showWelcomeScreen() {
-//     Navigator.of(context as BuildContext).pushNamed('/home');
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Form(
-//       key: _formKey,
-//       child: Column(
-//         mainAxisSize: MainAxisSize.min,
-//         children: [
-//           // LinearProgressIndicator(value: _formProgress),
-//           Text('Log in', style: Theme.of(context).textTheme.headlineMedium),
-//           Padding(
-//             padding: const EdgeInsets.all(8.0),
-//             child: TextFormField(
-//               controller: _usernameTextController,
-//               decoration: const InputDecoration(
-//                   icon: Icon(Icons.account_circle_outlined),
-//                   hintText: 'Username',
-//                   labelText: "Username *"),
-//               // onSaved: (String? value) {}), // TODO: должно запихивать в БД
-//               // validator: (String? value) {
-//               // TODO:проверка ввода
-//               //   return (value != null && value.contains('@')) ? 'Do not use the @ char.' : null;
-//               // },
-//               validator: (value) {
-//                 if (value == null || value.isEmpty) {
-//                   return 'Enter username';
-//                 }
-//                 return null;
-//               },
-//             ),
-//           ),
-//           Padding(
-//             padding: const EdgeInsets.all(8.0),
-//             child: TextFormField(
-//               obscureText: true,
-//               controller: _passwordTextController,
-//               decoration: const InputDecoration(
-//                   icon: Icon(Icons.key_sharp),
-//                   hintText: 'Password',
-//                   labelText: "Password *"),
-//               validator: (value) {
-//                 if (value == null || value.isEmpty) {
-//                   return 'Enter your password';
-//                 }
-//                 return null;
-//               },
-//             ),
-//           ),
-//           Row(
-//             // mainAxisSize: MainAxisSize.min,
-//             mainAxisAlignment: MainAxisAlignment.spaceAround,
-//             children: [
-//               TextButton(
-//                 style: ButtonStyle(
-//                   foregroundColor: MaterialStateProperty.resolveWith(
-//                       (Set<MaterialState> states) {
-//                     return states.contains(MaterialState.disabled)
-//                         ? null
-//                         : Colors.white;
-//                   }),
-//                   backgroundColor: MaterialStateProperty.resolveWith(
-//                       (Set<MaterialState> states) {
-//                     return states.contains(MaterialState.disabled)
-//                         ? null
-//                         : const Color.fromARGB(255, 112, 181, 237);
-//                   }),
-//                 ),
-//                 onPressed: () {
-//                   if (_formKey.currentState!.validate()) {
-//                     ScaffoldMessenger.of(context).showSnackBar(
-//                       const SnackBar(content: Text('Processing Data')),
-//                     );
-//                     _showWelcomeScreen;
-//                   }
-//                 },
-//                 child: const Text('Sign in'),
-//               ),
-//               TextButton(
-//                 style: ButtonStyle(
-//                   foregroundColor: MaterialStateProperty.resolveWith(
-//                       (Set<MaterialState> states) {
-//                     return states.contains(MaterialState.disabled)
-//                         ? null
-//                         : Colors.white;
-//                   }),
-//                   backgroundColor: MaterialStateProperty.resolveWith(
-//                       (Set<MaterialState> states) {
-//                     return states.contains(MaterialState.disabled)
-//                         ? null
-//                         : Color.fromARGB(255, 172, 196, 216);
-//                   }),
-//                 ),
-//                 onPressed: () {
-//                   Navigator.pop(context);
-//                 },
-//                 child: const Text('Go back'),
-//               ),
-//             ],
-//           )
-//         ],
-//       ),
-//     );
-//   }
-// }
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -232,13 +52,7 @@ class WelcomeScreen extends StatelessWidget {
       body: ListView(
         padding: EdgeInsets.symmetric(
             horizontal: MediaQuery.of(context).size.width / 8),
-        children: const [
-          Menu(),
-          // MediaQuery.of(context).size.width >= 980
-          //     ? Menu()
-          //     : SizedBox(), // Responsive
-          Body()
-        ],
+        children: const [Menu(), Body()],
       ),
     );
   }
@@ -274,13 +88,13 @@ class _MenuState extends State<Menu> {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              _menuItem(title: 'Home'),
-              _menuItem(title: 'About us'),
+              _menuItem(title: 'Домой'),
+              _menuItem(title: 'О нас'),
             ],
           ),
           Row(
             children: [
-              _menuItem(title: 'Sign In', isActive: true),
+              _menuItem(title: 'Войти', isActive: true),
               _registerButton()
             ],
           ),
@@ -306,8 +120,9 @@ class _MenuState extends State<Menu> {
                 }),
               ),
               onPressed: () {
-                if (title == 'Home') _showSignIn(context);
-                if (title == 'About us') _showUs(context);
+                if (title == 'Домой') _showSignIn(context);
+                if (title == 'О нас') _showUs(context);
+                if (title == 'Войти') _showSignIn(context);
               },
               child: Text(
                 title,
@@ -363,7 +178,7 @@ class _MenuState extends State<Menu> {
           _showSignUp(context);
         },
         child: const Text(
-          'Register',
+          'Регистрация',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.black54,
@@ -386,6 +201,14 @@ class _BodyState extends State<Body> {
     Navigator.of(context).pushNamed('/signup');
   }
 
+  void _showForgotPass() {
+    Navigator.of(context).pushNamed('/forgot_pass');
+  }
+
+  void _showPersonalHome() {
+    Navigator.pushNamed(context, '/homepage');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -397,7 +220,7 @@ class _BodyState extends State<Body> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'Sign In to \nMy Application',
+                'Генератор документации',
                 style: TextStyle(
                   fontSize: 45,
                   fontWeight: FontWeight.bold,
@@ -407,7 +230,7 @@ class _BodyState extends State<Body> {
                 height: 30,
               ),
               const Text(
-                "If you don't have an account",
+                "Если у вас нет аккаунта,",
                 style: TextStyle(
                     color: Colors.black54, fontWeight: FontWeight.bold),
               ),
@@ -417,17 +240,15 @@ class _BodyState extends State<Body> {
               Row(
                 children: [
                   const Text(
-                    "You can",
+                    "вы можете",
                     style: TextStyle(
                         color: Colors.black54, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(width: 15),
-                  GestureDetector(
-                    onTap: () {
-                      _showSignUp();
-                    },
+                  TextButton(
+                    onPressed: _showSignUp,
                     child: const Text(
-                      "Register here!",
+                      'зарегистрироваться здесь!',
                       style: TextStyle(
                           color: Colors.deepPurple,
                           fontWeight: FontWeight.bold),
@@ -442,17 +263,10 @@ class _BodyState extends State<Body> {
             ],
           ),
         ),
-
         Image.asset(
           'images/illustration-1.png',
           width: 300,
         ),
-        // MediaQuery.of(context).size.width >= 1300 //Responsive
-        //     ? Image.asset(
-        //         'images/illustration-1.png',
-        //         width: 300,
-        //       )
-        //     : SizedBox(),
         Padding(
           padding: EdgeInsets.symmetric(
               vertical: MediaQuery.of(context).size.height / 6),
@@ -470,7 +284,7 @@ class _BodyState extends State<Body> {
       children: [
         TextField(
           decoration: InputDecoration(
-            hintText: 'Enter email or Phone number',
+            hintText: 'Введите почту',
             filled: true,
             fillColor: Colors.blueGrey[50],
             labelStyle: const TextStyle(fontSize: 12),
@@ -489,9 +303,9 @@ class _BodyState extends State<Body> {
         ),
         const SizedBox(height: 30),
         TextField(
+          obscureText: true,
           decoration: InputDecoration(
-            hintText: 'Password',
-            counterText: 'Forgot password?',
+            hintText: 'Пароль',
             suffixIcon: const Icon(
               Icons.visibility_off_outlined,
               color: Colors.grey,
@@ -512,6 +326,14 @@ class _BodyState extends State<Body> {
             ),
           ),
         ),
+        TextButton(
+          onPressed: _showForgotPass,
+          child: const Text(
+            'Забыли пароль?',
+            style: TextStyle(
+                color: Colors.deepPurple, fontWeight: FontWeight.bold),
+          ),
+        ),
         const SizedBox(height: 40),
         Container(
           decoration: BoxDecoration(
@@ -526,7 +348,7 @@ class _BodyState extends State<Body> {
             ],
           ),
           child: ElevatedButton(
-            onPressed: () => print("it's pressed"),
+            onPressed: _showPersonalHome,
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.white,
               backgroundColor: Colors.deepPurple,
@@ -534,10 +356,10 @@ class _BodyState extends State<Body> {
                 borderRadius: BorderRadius.circular(15),
               ),
             ),
-            child: Container(
+            child: const SizedBox(
                 width: double.infinity,
                 height: 50,
-                child: const Center(child: Text("Sign In"))),
+                child: Center(child: Text("Войти"))),
           ),
         ),
         const SizedBox(height: 40),
@@ -550,7 +372,7 @@ class _BodyState extends State<Body> {
           ),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Text("Or continue with"),
+            child: Text("Или продолжить с"),
           ),
           Expanded(
             child: Divider(
