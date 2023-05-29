@@ -67,16 +67,22 @@ protected:
             while((function = queue.pop()) == std::nullopt && !time_to_die.load()) {
                 condvar.wait(lock);
             }
+            lock.unlock();
+            
 
-            if(time_to_die.load() && function == std::nullopt) {
+            if(time_to_die.load() && !function.has_value()) {
                 return;
             }
+            
+
 
             function.value().get();
 
             function = std::nullopt;
         }
     }
+
+    
 
 protected:
     std::condition_variable condvar;
@@ -85,19 +91,3 @@ protected:
     std::vector<std::thread> threads;
     safe_queue<std::future<void>> queue;
 };
-
-/*
-template <typename Func, typename ...Args>
-int64_t add_task(const Func& task_func, Args&&... args) {
-    // получаем значение индекса для новой задачи
-    int64_t task_idx = last_idx++;
-
-    std::lock_guard<std::mutex> q_lock(q_mtx);
-    q.emplace(std::async(std::launch::deferred, task_func, args...), task_idx);
-    
-    // делаем notify_one, чтобы проснулся один спящий поток (если такой есть)
-    // в методе run
-    q_cv.notify_one();
-    return task_idx;
-}
-*/
