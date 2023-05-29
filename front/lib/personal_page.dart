@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-  static const String route = '/homepage';
+class GenerateScreen extends StatelessWidget {
+  const GenerateScreen({super.key});
+  static const String route = '/generator';
 
   @override
   Widget build(BuildContext context) {
@@ -25,16 +25,8 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> {
-  // void _changeMe(BuildContext context) {
-  //   Navigator.pushNamed(context, '/changes');
-  // }
-
   void _showSignIn(BuildContext context) {
     Navigator.pushNamed(context, '/signin');
-  }
-
-  void _showGen(BuildContext context) {
-    Navigator.pushNamed(context, '/generator');
   }
 
   void _showUs(BuildContext context) {
@@ -51,7 +43,7 @@ class _MenuState extends State<Menu> {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              _menuItem(title: 'К генератору'),
+              _menuItem(title: 'Назад'),
               _menuItem(title: 'О нас'),
             ],
           ),
@@ -83,7 +75,7 @@ class _MenuState extends State<Menu> {
                 }),
               ),
               onPressed: () {
-                if (title == 'К генератору') _showGen(context);
+                if (title == 'Назад') Navigator.pop(context);
                 if (title == 'О нас') _showUs(context);
                 if (title == 'Выйти') _showSignIn(context);
               },
@@ -115,49 +107,48 @@ class _MenuState extends State<Menu> {
   }
 }
 
-class Body extends StatefulWidget {
-  const Body({super.key});
+class DocForm extends StatefulWidget {
+  const DocForm({super.key});
 
   @override
-  State<Body> createState() => _BodyState();
+  DocFormState createState() {
+    return DocFormState();
+  }
 }
 
-class _BodyState extends State<Body> {
-  void _changeMe(BuildContext context) {
-    Navigator.pushNamed(context, '/changes');
+class DocFormState extends State<DocForm> {
+  final _formLogin = GlobalKey<DocFormState>();
+
+  void _showPersonalHome() {
+    Navigator.pushNamed(context, '/homepage');
   }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        SizedBox(
-          width: 360,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Image.asset(
-                'images/illustration-2.png',
-                width: 300,
-              ),
-            ],
+    return Form(
+      key: _formLogin,
+      child: Column(
+        children: <Widget>[
+          TextFormField(
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Имя автора',
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Пустое поле';
+              }
+              return null;
+            },
           ),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(
-              vertical: MediaQuery.of(context).size.height / 6),
-          child: SizedBox(
-            width: 320,
-            child: _formLogin(),
-          ),
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ElevatedButton(
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: ElevatedButton(
               onPressed: () {
-                _changeMe;
+                _showPersonalHome;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Processing Data')),
+                );
               },
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
@@ -169,130 +160,42 @@ class _BodyState extends State<Body> {
               child: const SizedBox(
                   width: 300,
                   height: 50,
-                  child: Center(child: Text("Редактировать"))),
+                  child: Center(child: Text("Сгенерировать"))),
             ),
-          ],
-        ),
-      ],
+          ),
+        ],
+      ),
     );
   }
+}
 
-  Widget _formLogin() {
-    return Column(
-      children: const [
-        SizedBox(
-          width: 85,
-          height: 30,
-          child: Center(
-            child: Text(
-              "Имя",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Color.fromARGB(255, 120, 120, 120),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-        SizedBox(
-          width: 350,
-          height: 20,
-        ),
-        SizedBox(
-          width: 350,
-          height: 30,
-          child: Center(
-            child: Text(
-              "Фамилия",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Color.fromARGB(255, 120, 120, 120),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-        SizedBox(
-          width: 350,
-          height: 20,
-        ),
-        SizedBox(
-          width: 350,
-          height: 30,
-          child: Center(
-            child: Text(
-              "Почта",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Color.fromARGB(255, 120, 120, 120),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-        SizedBox(
-          width: 350,
-          height: 20,
-        ),
-        SizedBox(
-          width: 350,
-          height: 30,
-          child: Center(
-            child: Text(
-              "Логин",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Color.fromARGB(255, 120, 120, 120),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
+class Body extends StatefulWidget {
+  const Body({super.key});
 
-        // TextField(
-        //   decoration: InputDecoration(
-        //     hintText: 'Введите почту',
-        //     filled: true,
-        //     fillColor: Colors.blueGrey[50],
-        //     labelStyle: const TextStyle(fontSize: 12),
-        //     contentPadding: const EdgeInsets.only(left: 30),
-        //     enabledBorder: OutlineInputBorder(
-        //       borderSide:
-        //           const BorderSide(color: Color.fromARGB(255, 236, 239, 241)),
-        //       borderRadius: BorderRadius.circular(15),
-        //     ),
-        //     focusedBorder: OutlineInputBorder(
-        //       borderSide:
-        //           const BorderSide(color: Color.fromARGB(255, 236, 239, 241)),
-        //       borderRadius: BorderRadius.circular(15),
-        //     ),
+  @override
+  State<Body> createState() => _BodyState();
+}
+
+class _BodyState extends State<Body> {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // SizedBox(
+        //   width: 360,
+        //   child: Column(
+        //     crossAxisAlignment: CrossAxisAlignment.start,
         //   ),
         // ),
-        // const SizedBox(height: 30),
-        // TextField(
-        //   obscureText: true,
-        //   decoration: InputDecoration(
-        //     hintText: 'Пароль',
-        //     suffixIcon: const Icon(
-        //       Icons.visibility_off_outlined,
-        //       color: Colors.grey,
-        //     ),
-        //     filled: true,
-        //     fillColor: Colors.blueGrey[50],
-        //     labelStyle: const TextStyle(fontSize: 12),
-        //     contentPadding: const EdgeInsets.only(left: 30),
-        //     enabledBorder: OutlineInputBorder(
-        //       borderSide:
-        //           const BorderSide(color: Color.fromARGB(255, 236, 239, 241)),
-        //       borderRadius: BorderRadius.circular(15),
-        //     ),
-        //     focusedBorder: OutlineInputBorder(
-        //       borderSide:
-        //           const BorderSide(color: Color.fromARGB(255, 236, 239, 241)),
-        //       borderRadius: BorderRadius.circular(15),
-        //     ),
-        //   ),
-        // )
+        Padding(
+          padding: EdgeInsets.symmetric(
+              vertical: MediaQuery.of(context).size.height / 6),
+          child: const SizedBox(
+            width: 320,
+            child: DocForm(),
+          ),
+        ),
       ],
     );
   }
